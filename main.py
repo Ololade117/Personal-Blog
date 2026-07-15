@@ -1,7 +1,7 @@
 from fastapi import FastAPI 
 from app.routes import posts
 from fastapi.staticfiles import StaticFiles
-
+from app.templates import templates
 
 app = FastAPI()
 
@@ -12,6 +12,9 @@ app.mount(
 )
 
 app.include_router(posts.router)
-@app.get("/")
-def home():
-    return {"message:" "Personal Blog API is running"}
+
+@app.get("/health")
+def health():
+    return {"message": "Personal Blog API is running"}
+
+
