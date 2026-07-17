@@ -9,3 +9,4 @@ class Post(Base):
     slug = Column(String, unique=True)
     content = Column(Text)
     published = Column(Boolean, default=False)
+    tag = Column(String, nullable=True)

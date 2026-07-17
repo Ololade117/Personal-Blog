@@ -3,5 +3,15 @@
 
 <h1>{{ post.title }}</h1>
 <p>{{post.content}}</p>
+<p><strong>Tag:</strong> {{ post.tag }}</p>
 
+<a href="/admin/edit/{{ post.id }}">Edit</a>
+
+<br><br>
+
+<form action="/admin/delete/{{ post.id }}" method="post">
+    <button type = "submit">
+        Delete
+    </button>
+</form>
 {% endblock %}

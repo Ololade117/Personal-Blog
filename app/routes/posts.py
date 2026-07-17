@@ -24,11 +24,13 @@ def home(request: Request,
 @router.post("/admin/new", response_class=HTMLResponse)
 def create_post(
     title: str = Form(...),
+    tag : str = Form(""),
     content: str = Form(...),
     db: Session = Depends(get_db)
 ):
     post = Post(
         title = title,
+        tag = tag,
         content=content
     )
     db.add(post)
@@ -73,4 +75,65 @@ def new_post_page(
         context={
             "request": request,
         },
+    )
+
+@router.get("/admin/edit/{post_id}",
+    response_class=HTMLResponse)
+def edit_post_page(
+    post_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+    return templates.TemplateResponse(
+        request=request,
+        name="edit.html",
+        context={
+            "request": request,
+            "post": post,
+        },
+    )
+
+@router.post("/admin/edit/{post_id}")
+def update_post(
+    post_id: int,
+    title: str = Form(...),
+    tag: str = Form(""),
+    content: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+    post.title = title
+    post.tag = tag
+    post.content = content
+    db.commit()
+    return RedirectResponse(
+        url=f"/posts/{post_id}",
+        status_code=303
+    )
+
+
+@router.post("/admin/delete/{post_id}")
+def delete_post(
+    post_id: int,
+    db: Session = Depends(get_db)
+):
+    post = (
+        db.query(Post)
+        .filter(Post.id == post_id)
+        .first()
+    )
+    db.delete(post)
+    db.commit()
+    return RedirectResponse(
+        url="/",
+        status_code=303
     )
